@@ -23,8 +23,8 @@ module Fastlane
       return self
     end
 
-    def lane(key, &block)
-      @runner.set_block(key, block)
+    def lane(key, sublane=nil, &block)
+      @runner.set_block(key, sublane, block)
     end
 
     def before_all(&block)

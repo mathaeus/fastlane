@@ -1,9 +1,13 @@
-before_all do |lane|
+before_all do |lane, sublane|
   File.write("/tmp/fastlane/before_all_#{lane}", '1')
 end
 
 lane :test do 
   File.write('/tmp/fastlane/test', '1')
+end
+
+lane :test, :sublane do 
+  File.write('/tmp/fastlane/test_sublane', '1')
 end
 
 lane :deploy do

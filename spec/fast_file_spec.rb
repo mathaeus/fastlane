@@ -31,15 +31,15 @@ describe Fastlane do
         expect(File.exists?('/tmp/fastlane/test')).to eq(true)
       end
 
-      it "execute different envs with before with lane" do
+      it "execute different envs with sublane" do
         FileUtils.rm_rf('/tmp/fastlane/')
         FileUtils.mkdir_p('/tmp/fastlane/')
 
         ff = Fastlane::FastFile.new('./spec/fixtures/fastfiles/Fastfile2')
-        ff.runner.execute(:deploy)
+        ff.runner.execute(:deploy__sublane)
         expect(File.exists?('/tmp/fastlane/before_all_deploy')).to eq(true)
         expect(File.exists?('/tmp/fastlane/deploy')).to eq(true)
-        expect(File.exists?('/tmp/fastlane/test')).to eq(false)
+        expect(File.exists?('/tmp/fastlane/test_sublane')).to eq(false)
         expect(File.exists?('/tmp/fastlane/after_all')).to eq(true)
         expect(File.read("/tmp/fastlane/after_all")).to eq("deploy")
 
