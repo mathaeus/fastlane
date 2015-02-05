@@ -1,10 +1,16 @@
 module Fastlane
   class Runner
 
+    SUBLANE_DIVIDER = '__'
+
     def execute(key)
+
       if key
+        # Replace ':' in the key with '__' cause easier to type
+        key = key.to_s.gsub(':', SUBLANE_DIVIDER)
+
         # Splits the key into two parts - lane and sublane
-        lane_key_parts = key.to_s.split("__")
+        lane_key_parts = key.split(SUBLANE_DIVIDER)
 
         lane = lane_key_parts[0].to_sym # Ex: key=test__prod, lane=test
         sublane = lane_key_parts[1].to_sym if lane_key_parts[1]  # Ex: key=test__prod, sublane=prod
@@ -58,7 +64,7 @@ module Fastlane
     end
 
     def set_block(lane, sublane=nil, block)
-      lane = (lane.to_s + "__" + sublane.to_s).to_sym if sublane
+      lane = (lane.to_s + SUBLANE_DIVIDER + sublane.to_s).to_sym if sublane
 
       raise "Lane '#{lane}' was defined multiple times!".red if blocks[lane]
       blocks[lane] = block
