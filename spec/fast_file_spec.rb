@@ -36,7 +36,7 @@ describe Fastlane do
         FileUtils.mkdir_p('/tmp/fastlane/')
 
         ff = Fastlane::FastFile.new('./spec/fixtures/fastfiles/Fastfile2')
-        ff.runner.execute(:deploy__sublane)
+        ff.runner.execute(:deploy, :sublane)
         expect(File.exists?('/tmp/fastlane/before_all_deploy')).to eq(true)
         expect(File.exists?('/tmp/fastlane/deploy')).to eq(true)
         expect(File.exists?('/tmp/fastlane/test_sublane')).to eq(false)

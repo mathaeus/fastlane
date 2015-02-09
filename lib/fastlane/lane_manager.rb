@@ -12,7 +12,8 @@ module Fastlane
       e = nil
       begin
         lanes.each do |key|
-          ff.runner.execute(key)
+          lane, sublane = Helper.parse_key(key)
+          ff.runner.execute(lane, sublane)
         end
       rescue => ex
         if Actions.lane_context.count > 0
@@ -39,5 +40,6 @@ module Fastlane
         raise e
       end
     end
+
   end
 end

@@ -4,6 +4,7 @@ module Fastlane
   module Actions
     module SharedValues
       LANE_NAME = :LANE_NAME
+      SUBLANE_NAME = :SUBLANE_NAME
     end
 
     def self.executed_actions

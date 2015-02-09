@@ -1,26 +1,24 @@
+require 'dotenv'
+
 module Fastlane
   class Runner
 
-    SUBLANE_DIVIDER = '__'
-
-    def execute(key)
-
-      if key
-        # Replace ':' in the key with '__' cause easier to type
-        key = key.to_s.gsub(':', SUBLANE_DIVIDER)
-
-        # Splits the key into two parts - lane and sublane
-        lane_key_parts = key.split(SUBLANE_DIVIDER)
-
-        lane = lane_key_parts[0].to_sym # Ex: key=test__prod, lane=test
-        sublane = lane_key_parts[1].to_sym if lane_key_parts[1]  # Ex: key=test__prod, sublane=prod
-      end
-      key = key.to_sym
+    def execute(lane, sublane=nil)
+      lane = lane.to_sym if lane
+      sublane = sublane.to_sym if sublane
 
       Helper.log.info "Driving the lane '#{lane}'".green
       Actions.lane_context[Actions::SharedValues::LANE_NAME] = lane
+      Actions.lane_context[Actions::SharedValues::SUBLANE_NAME] = sublane
 
       return_val = nil
+
+      # Loading environment variables with dotenv
+      # Note: Using "overload" since multiple lanes can be executed in a row
+      if sublane
+        Helper.log.info "Loading from '.env.#{sublane.to_s}'".green
+        Dotenv.overload(".env.#{sublane.to_s}")
+      end
 
       Dir.chdir(Fastlane::FastlaneFolder.path || Dir.pwd) do # the file is located in the fastlane folder
         @before_all.call(lane, sublane) if @before_all
@@ -28,8 +26,9 @@ module Fastlane
         return_val = nil
 
         # Looks for most specific lane with sublane first - ex: test__prod
-        if blocks[key]
-          return_val = blocks[key].call sublane
+        full_lane = Helper.generate_key(lane, sublane)
+        if blocks[full_lane]
+          return_val = blocks[full_lane].call sublane
         # Then looks for generic lane - ex: test
         elsif blocks[lane]
           return_val = blocks[lane].call
@@ -64,10 +63,10 @@ module Fastlane
     end
 
     def set_block(lane, sublane=nil, block)
-      lane = (lane.to_s + SUBLANE_DIVIDER + sublane.to_s).to_sym if sublane
+      full_lane = Helper.generate_key(lane, sublane)
 
-      raise "Lane '#{lane}' was defined multiple times!".red if blocks[lane]
-      blocks[lane] = block
+      raise "Lane '#{full_lane}' was defined multiple times!".red if blocks[full_lane]
+      blocks[full_lane] = block
     end
 
     private

@@ -12,6 +12,8 @@ end
 module Fastlane
   module Helper
 
+    SUBLANE_DIVIDER = '__'
+
     # Logging happens using this method
     def self.log
       if is_test?
@@ -62,5 +64,30 @@ module Fastlane
         return './'
       end
     end
+
+    def self.parse_key(key)
+      lane = nil
+      sublane = nil
+
+      if key
+        # Replace ':' in the key with '__' cause easier to type
+        key = key.to_s.gsub(':', SUBLANE_DIVIDER)
+
+        # Splits the key into two parts - lane and sublane
+        lane_key_parts = key.split(SUBLANE_DIVIDER)
+
+        lane = lane_key_parts[0].to_sym # Ex: key=test__prod, lane=test
+        sublane = lane_key_parts[1].to_sym if lane_key_parts[1]  # Ex: key=test__prod, sublane=prod
+      end
+      key = key.to_sym
+
+      return lane, sublane
+    end
+
+    def self.generate_key(lane=nil, sublane = nil)
+      return (lane.to_s + SUBLANE_DIVIDER + sublane.to_s).to_sym if sublane
+      return lane
+    end
+
   end
 end
