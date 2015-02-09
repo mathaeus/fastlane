@@ -11,7 +11,9 @@ module Fastlane
       end
 
       # Making sure the default '.env' get loaded
-      Dotenv.load('.env', '.env.default')
+      env_file = File.join(Fastlane::FastlaneFolder.path || "", '.env')
+      env_default_file = File.join(Fastlane::FastlaneFolder.path || "", '.env.default')
+      Dotenv.load(env_file, env_default_file)
 
       start = Time.now
       e = nil

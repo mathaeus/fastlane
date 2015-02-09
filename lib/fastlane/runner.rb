@@ -16,8 +16,9 @@ module Fastlane
       # Loading environment variables with dotenv
       # Note: Using "overload" since multiple lanes can be executed in a row
       if sublane
-        Helper.log.info "Loading from '.env.#{sublane.to_s}'".green
-        Dotenv.overload(".env.#{sublane.to_s}")
+        env_file = File.join(Fastlane::FastlaneFolder.path || "", ".env.#{sublane.to_s}")
+        Helper.log.info "Loading from '#{env_file}'".green
+        Dotenv.overload(env_file)
       end
 
       Dir.chdir(Fastlane::FastlaneFolder.path || Dir.pwd) do # the file is located in the fastlane folder
