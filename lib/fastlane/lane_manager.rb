@@ -1,3 +1,5 @@
+require 'dotenv'
+
 module Fastlane
   class LaneManager
     def self.cruise_lanes(lanes)
@@ -7,6 +9,9 @@ module Fastlane
       if lanes.count == 0
         raise "Please pass the name of the lane you want to drive. Available lanes: #{ff.runner.available_lanes.join(', ')}".red
       end
+
+      # Making sure the default '.env' get loaded
+      Dotenv.load('.env', '.env.default')
 
       start = Time.now
       e = nil
